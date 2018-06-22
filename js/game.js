@@ -1,4 +1,15 @@
-(function() {
+*/Created by,
+   nehsus*/
+window.onload(function() {
+  var container = Document.getElementByID('gameContainer');
+  this.game = new Phaser.Game({
+    width: window.innerWidth,
+    height: window.innerHeight > 480 ? 480 : window.innerHeight,
+    renderer: Phaser.AUTO;
+    antialias: true,
+    parent: 'gameContainer' //write div tag here
+    enableDebug: false;
+  });
   var width = window.innerWidth;
   var height = window.innerHeight > 480 ? 480 : window.innerHeight;
   var gameScore = 0;
@@ -6,16 +17,10 @@
   var collecties;
   var solved = false;
   var runForrest = {
-    prepForrest: function() {
-      this.game = new Phaser.Game(width, height, Phaser.CANVAS, '');
-      this.game.state.add("load", this.load);
-      this.game.state.add("title", this.title);
-      this.game.state.add("play", this.play);
-      this.game.state.add("gameOver", this.gameOver);
-      this.game.state.start("load");
-    },
     load: {
       preload: function() {
+        //this.game = new Phaser.Game(width, height, Phaser.CANVAS, '');
+
         this.game.load.image('platform', 'assets/ground1.png');
         this.game.load.image('collecty', 'assets/collecty.png');
         this.game.load.spritesheet('trump-run', 'assets/trump_run.png', 90,90 );//38, 63);
@@ -29,11 +34,10 @@
 
       },
       create: function() {
-        this.game.state.start("title");
+        this.game.state.start("index");
       }
     },
-    // title screen
-    title: {
+    index: {
       create: function() {
         this.bg = this.game.add.tileSprite(0, 0, width, height, 'runnerBack');
         this.logo = this.game.add.sprite(this.game.world.width / 2 - 158, 20, 'logo');
@@ -124,27 +128,10 @@
             fill: "white"
           });
         }
-        /*function newRound(){
-          console.log("new round")
-          failed = false;
-          var a = Math.floor(Math.random()*10)+1, b=Math.floor(Math.random()*10), c=a*b;
-          if(ob1 || ob2){ob1.destroy(); ob2.destroy();}
-          var question;
-          var answer;
-          var corrAns = Math.floor(Math.random()*4);
-          var similar = [];
-          var maxAns;
-
-          switch(Math.floor(Math.random()*2)){
-            case 0:question = a + " x " + b + " = ?"; answer = c; maxAns = 100; break;
-            case 1:question = c + " / " + a + " = ?"; answer = b; maxAns = 100; break;
-          }
-        }*/
       },
       update: function() {
 
         var that = this;
-      //  game.physics.arcade.overlap(santa, collecties, collectStar, null, this);
         if (!this.isGameOver) {
           gameScore += .5;
           this.gameSpeed += .03;
@@ -206,5 +193,9 @@
       },
     }
   };
-  runForrest.prepForrest();
-})();
+  this.game.state.add("load", this.load);
+  this.game.state.add("index", this.index);
+  this.game.state.add("play", this.play);
+  this.game.state.add("gameOver", this.gameOver);
+  this.game.state.start("load");
+});
