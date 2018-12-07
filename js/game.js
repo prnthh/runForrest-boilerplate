@@ -20,7 +20,7 @@
 
         this.game.load.spritesheet('trump-run', 'assets/trump_run.png', 90,90 );//38, 63);
         this.game.load.image('runnerBack', 'assets/dess.png');
-        this.game.load.image("logo", "assets/game-logo.png");
+        this.game.load.image("logo", "https://cdn.glitch.com/fc02ae88-423e-41c5-9598-355a32541bb5%2Fgame-logo.png?1544182444735");
         this.game.load.image("game-over", "assets/game-over.png");
         this.game.load.image("startMado", "assets/start-btn.png");
         this.game.load.image("playGameButton", "assets/play-btn.png");
@@ -36,7 +36,10 @@
     title: {
       create: function() {
         this.bg = this.game.add.tileSprite(0, 0, width, height, 'runnerBack');
-        this.logo = this.game.add.sprite(this.game.world.width / 2 - 158, 20, 'logo');
+        this.logo = this.game.add.sprite(0,0 , 'logo');
+        this.logo.scale.setTo(0.6, 0.6);
+        this.logo.x = this.game.world.width / 2 - this.logo.width/2;
+        this.logo.y = this.logo.height/2;
         this.logo.alpha = 0;
         this.game.add.tween(this.logo).to({
           alpha: 1
