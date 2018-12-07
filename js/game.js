@@ -1,15 +1,4 @@
-*/Created by,
-   nehsus*/
-window.onload(function() {
-  var container = Document.getElementByID('gameContainer');
-  this.game = new Phaser.Game({
-    width: window.innerWidth,
-    height: window.innerHeight > 480 ? 480 : window.innerHeight,
-    renderer: Phaser.AUTO;
-    antialias: true,
-    parent: 'gameContainer' //write div tag here
-    enableDebug: false;
-  });
+(function() {
   var width = window.innerWidth;
   var height = window.innerHeight > 480 ? 480 : window.innerHeight;
   var gameScore = 0;
@@ -17,34 +6,41 @@ window.onload(function() {
   var collecties;
   var solved = false;
   var runForrest = {
+    prepForrest: function() {
+      this.game = new Phaser.Game(width, height, Phaser.CANVAS, '');
+      this.game.state.add("load", this.load);
+      this.game.state.add("title", this.title);
+      this.game.state.add("play", this.play);
+      this.game.state.add("gameOver", this.gameOver);
+      this.game.state.start("load");
+    },
     load: {
       preload: function() {
-        //this.game = new Phaser.Game(width, height, Phaser.CANVAS, '');
-
         this.game.load.image('platform', 'assets/ground1.png');
-        this.game.load.image('collecty', 'assets/collecty.png');
+
         this.game.load.spritesheet('trump-run', 'assets/trump_run.png', 90,90 );//38, 63);
         this.game.load.image('runnerBack', 'assets/dess.png');
         this.game.load.image("logo", "assets/game-logo.png");
         this.game.load.image("game-over", "assets/game-over.png");
         this.game.load.image("startMado", "assets/start-btn.png");
         this.game.load.image("playGameButton", "assets/play-btn.png");
-        this.game.load.image("replayGameButton", "assets/restart-btn.png");
+      //  this.game.load.image("replayGameButton", "assets/play-btn.png");
         this.game.load.image('moneyyy', 'assets/download.png');
 
       },
       create: function() {
-        this.game.state.start("index");
+        this.game.state.start("title");
       }
     },
-    index: {
+    // title screen
+    title: {
       create: function() {
         this.bg = this.game.add.tileSprite(0, 0, width, height, 'runnerBack');
         this.logo = this.game.add.sprite(this.game.world.width / 2 - 158, 20, 'logo');
         this.logo.alpha = 0;
         this.game.add.tween(this.logo).to({
           alpha: 1
-        }, 1000, Phaser.Easing.Linear.None, true, 0);
+            }, 1000, Phaser.Easing.Linear.None, true, 0);
         this.startMado = this.game.add.button(this.game.world.width / 2 - 159, this.game.world.height - 120, 'startMado', this.startClicked);
         this.startMado.alpha = 0;
         this.game.add.tween(this.startMado).to({
@@ -72,13 +68,13 @@ window.onload(function() {
         this.platforms = this.game.add.group();
         this.platforms.enableBody = true;
         this.platforms.createMultiple(5, 'platform', 0, false);
-        this.platforms.setAll('anchor.x', 0.5);
-        this.platforms.setAll('anchor.y', 0.5);
+        this.platforms.setAll('anchor.x', 0.1);
+        this.platforms.setAll('anchor.y', 0.25);
         var plat;
         for (var i = 0; i < 5; i++) {
           plat = this.platforms.getFirstExists(false);
           plat.reset(i * 192, this.game.world.height - 24);
-          plat.width = 192;
+          plat.width = 111;
           plat.height = 24;
           this.game.physics.arcade.enable(plat);
           plat.body.immovable = true;
@@ -92,7 +88,7 @@ window.onload(function() {
         this.forrest.body.gravity.y = 1500;
         this.forrest.body.collideWorldBounds = true;
         this.cloudyWithAChance.makeParticles('moneyyy');
-        this.cloudyWithAChance.maxParticleScale = .09;
+        this.cloudyWithAChance.maxParticleScale = .15;
         this.cloudyWithAChance.minParticleScale = .01;
         this.cloudyWithAChance.setYSpeed(100, 200);
         this.cloudyWithAChance.gravity = 0;
@@ -108,7 +104,7 @@ window.onload(function() {
           fill: "gray",
           fontWeight: "bold"
         });
-        this.quest = this.game.add.text(400, 20+20, 'What is the air-speed velocity of an unladen swallow?',{
+        this.quest = this.game.add.text(400, 20+20, '',{
           font: "18px Helvetica",
           fill: "white"
         });
@@ -116,22 +112,24 @@ window.onload(function() {
         collecties = this.game.add.group();
         collecties.enableBody = true;
         // generate starts
-        for (var i = 0; i < 12; i++) {
-          var pene;
-          pene = collecties.create(i * 70, 0, 'star');
-          pene.body.gravity.y = 300;
-          pene.body.bounce.y = 0.7 + Math.random() * 0.2;
-        }
+      //  for (var i = 0; i < 12; i++) {
+      //    var pene;
+      //    pene = collecties.create(i * 70, 0, 'star');
+        //  pene.body.gravity.y = 300;
+        //  pene.body.bounce.y = 0.7 + Math.random() * 0.2;
+        //}
         if (highScore > 0) {
           this.highScore = this.game.add.text(20, 45, 'Best: ' + highScore, {
             font: "18px Arial",
             fill: "white"
           });
         }
+
       },
       update: function() {
 
         var that = this;
+      //  game.physics.arcade.overlap(santa, collecties, collectStar, null, this);
         if (!this.isGameOver) {
           gameScore += .5;
           this.gameSpeed += .03;
@@ -182,7 +180,7 @@ window.onload(function() {
         this.game.add.tween(this.score).to({
           alpha: 1
         }, 600, Phaser.Easing.Linear.None, true, 600);
-        this.replayGameButton = this.game.add.button(this.game.world.width / 2 - 183.5, 280, 'replayGameButton', this.restartClicked);
+        this.replayGameButton = this.game.add.button(this.game.world.width / 2 - 183.5, 280, 'startMado', this.restartClicked);
         this.replayGameButton.alpha = 0;
         this.game.add.tween(this.replayGameButton).to({
           alpha: 1
@@ -193,9 +191,5 @@ window.onload(function() {
       },
     }
   };
-  this.game.state.add("load", this.load);
-  this.game.state.add("index", this.index);
-  this.game.state.add("play", this.play);
-  this.game.state.add("gameOver", this.gameOver);
-  this.game.state.start("load");
-});
+  runForrest.prepForrest();
+})();
